@@ -1,12 +1,3 @@
-//io::stdin().read_line(&mut action);
-/* Ввод числа и вызов md5
- let mut guess = String::new();
-io::stdin().read_line(&mut guess);
-if guess.ends_with('\n') {
-    guess.pop();
-    println!("{}", md5_utf8(&guess));}*/
-
-
 #![allow(non_snake_case)] // RFC 1321 uses many capitalized variables
 use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
 use std::io; // Модуль ввода и вывода.
@@ -270,8 +261,6 @@ fn main() {
     assert!(md5_utf8("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") == "d174ab98d277d9f5a5611c2c9f419d9f");
     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
     */
-
-
 
     //#[warn(unused_parens)]
     println!("Введите номер действия:\n1 Регистрация\n2 Вход");
