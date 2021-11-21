@@ -291,63 +291,44 @@ fn main() {
         let mut contents = String::new();
         file.read_to_string(&mut contents).unwrap();
 
-       let mut output = File::create(path).unwrap(); // открыть файл для записи
-
-        let f = OpenOptions::new()
+       let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .append(true)
             .open(path)
             .expect("unable to open file");
         let mut f = BufWriter::new(f);
+        writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); // запись строк в файл
+        println!("Конец регистрации");
 
-        writeln!(f, "{} {} {} {}", contents, login, password, lvl).expect("unable to write"); // запись строк в файл
         } else if "2" == action.trim() {
             // вход
             println!("Введите логин:/n");
-            let mut login = String::new();
-            io::stdin().read_line(&mut login);
+            let mut login_authorization = String::new();
+            io::stdin().read_line(&mut login_authorization);
             // пароль
             println!("Введите пароль:/n");
-            let mut password = String::new();
-            io::stdin().read_line(&mut password);
+            let mut password_authorization = String::new();
+            io::stdin().read_line(&mut password_authorization);
             // уровень доступа
             println!("Введите Уровень доступа:/n");
-            let mut lvl = String::new();
-            io::stdin().read_line(&mut lvl);
+            let mut lvl_authorization = String::new();
+            io::stdin().read_line(&mut lvl_authorization);
+            //сравнить данные из файла
+        println!("Конец входа");
+
         } else {
             loop {
                 println!("Ошибка");
             }
         }
 
-        /*
-        let mut text = String::new();
-        io::stdin().read_line(&mut text);
-        println!("vvod {}", md5_utf8(&text)); // потом удалить
-        */
-
-
         // открыть в режиме только для чтения (игнорируя ошибки).
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
-
         // чтение файла построчно используя lines() итератор из std::io::BufRead
         for (index, line) in reader.lines().enumerate() { // enumerate итератор
             let line = line.unwrap(); // игнорировать ошибки
             println!("{}. {}", index + 1, line);
         }
-
-        /*
-    let path = "...";
-    let f = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(path)
-            .expect("unable to open file");
-    let mut f = BufWriter::new(f);
-
-    for i in 1..100 {
-        write!(f, "{}", i).expect("unable to write");
-    */
     }
 
