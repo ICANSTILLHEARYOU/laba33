@@ -336,8 +336,4 @@ fn main() {
         let line = line.unwrap(); // Ignore errors
         println!("{}. {}", index + 1, line);
     }
-    люблю травку но тебя больше <3 <3 <3 <3
-    1sadlka
-    люблю травку но тебя больше <3
-    люблю травку но тебя больше <3
 }
