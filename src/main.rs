@@ -336,9 +336,5 @@ fn main() {
         let line = line.unwrap(); // Ignore errors
         println!("{}. {}", index + 1, line);
     }
-    println!("{}. {}", index + 1, line);
-    println!("{}. {}", index + 1, line);
-    println!("{}. {}", index + 1, line);
-    println!("{}. {}", index + 1, line);
-    println!("{}. {}", index + 1, line);
+
 }
