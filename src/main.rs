@@ -16,9 +16,6 @@ use std::env;
 use std::io::Write;
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
-
-
-
     let bitcount = msg.len().saturating_mul(8) as u64;
     // pub const fn saturating_mul(self, rhs: u8) -> u8
     // Насыщающее целочисленное умножение. Вычисляет self * rhs, насыщая числовые границы вместо переполнения.
@@ -323,8 +320,7 @@ fn main() {
     io::stdin().read_line(&mut text);
     println!("vvod {}", md5_utf8(&text)); // потом ужалить
 
-    let mut output = File::create(path); // открыть файл для записи
-    let mut output = File::create(path).unwrap();
+    let mut output = File::create(path).unwrap(); // открыть файл для записи
     write!(&mut output, "{}", text).unwrap();
 
     // открыть в режиме только для чтения (игнорируя ошибки).
