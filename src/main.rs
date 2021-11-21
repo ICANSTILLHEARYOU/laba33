@@ -5,8 +5,8 @@ use std::fs::File; //  Операции манипулирования файл�
 use std::io::{BufRead, BufReader};
 use std::env;
 use std::io::Write;
-use std::fs::OpenOptions;
-use std::io::BufWriter;
+//use std::fs::OpenOptions;
+//use std::io::BufWriter;
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -268,8 +268,11 @@ fn main() {
     println!("Введите номер действия:\n1 Регистрация\n2 Вход");
     let mut action = String::new();
     io::stdin().read_line(&mut action);
+    let path = "all_users.txt"; // логины и пароли
+    let path_admin = "admin_dock.txt"; // данные для админа
+    let path_user = "user_dock.txt"; // данные для обычного пользователя
 
-    if ("1" == action.trim()) {
+    if "1" == action.trim() {
             // регистрация
             // логин
             println!("Введите логин:/n");
@@ -283,7 +286,10 @@ fn main() {
             println!("Введите Уровень доступа:/n");
             let mut lvl = String::new();
             io::stdin().read_line(&mut lvl);
-    } else if ("2" == action.trim()) {
+
+            let mut output = File::create(path).unwrap(); // открыть файл для записи
+            write!(&mut output, "{} {} {}", login, password, lvl).unwrap(); // запись строк в файл
+    } else if "2" == action.trim() {
             // вход
             println!("Введите логин:/n");
             let mut login = String::new();
@@ -298,21 +304,14 @@ fn main() {
             io::stdin().read_line(&mut lvl);
 
     } else {
-        while true {
+        loop {
             println!("Ошибка");
         }
     }
 
-    let path = "all_users.txt"; // логины и пароли
-    let path_admin = "admin_dock.txt"; // данные для админа
-    let path_user = "user_dock.txt"; // данные для обычного пользователя
-
     let mut text = String::new();
     io::stdin().read_line(&mut text);
     println!("vvod {}", md5_utf8(&text)); // потом ужалить
-
-    let mut output = File::create(path).unwrap(); // открыть файл для записи
-    write!(&mut output, "{} {} {}", login, password, lvl).unwrap();
 
     // открыть в режиме только для чтения (игнорируя ошибки).
     let file = File::open(path).unwrap();
@@ -324,19 +323,17 @@ fn main() {
         println!("{}. {}", index + 1, line);
     }
 
-
-
-
-        /*let path = "...";
-        let f = OpenOptions::new()
+    /*
+    let path = "...";
+    let f = OpenOptions::new()
             .write(true)
             .append(true)
             .open(path)
             .expect("unable to open file");
-        let mut f = BufWriter::new(f);
+    let mut f = BufWriter::new(f);
 
-        for i in 1..100 {
-            write!(f, "{}", i).expect("unable to write");
-        */
+    for i in 1..100 {
+        write!(f, "{}", i).expect("unable to write");
+    */
 
 }
