@@ -282,10 +282,42 @@ fn main() {
         println!("Введите пароль:/n");
         let mut password = String::new();
         io::stdin().read_line(&mut password);
+        if password.contains("!") || password.contains('@') || password.contains('"')
+            || password.contains("#") || password.contains("№") || password.contains("$")
+            || password.contains(";") || password.contains("%") || password.contains(":")
+            || password.contains("^") || password.contains("[") || password.contains("]")
+            || password.contains("&") || password.contains("?") || password.contains("*")
+            || password.contains("(") || password.contains(")") || password.contains("-")
+            || password.contains("_") || password.contains("=") || password.contains("+")
+            || password.contains("{") || password.contains("}") || password.contains(",")
+            || password.contains(".") {
+            println!("Спецсимвол!");
+            if password.contains("Q") || password.contains("W") || password.contains("E") ||
+                password.contains("R") || password.contains("T") || password.contains("Y") ||
+                password.contains("U") || password.contains("I") || password.contains("O") ||
+                password.contains("P") || password.contains("A") || password.contains("S") ||
+                password.contains("D") || password.contains("F") || password.contains("G") ||
+                password.contains("H") || password.contains("J") || password.contains("K") ||
+                password.contains("L") || password.contains("Z") || password.contains("X") ||
+                password.contains("C") || password.contains("V") || password.contains("B") ||
+                password.contains("N") || password.contains("M") {
+                println!("Заглавная буква!");
+                if password.contains("1") || password.contains("2") || password.contains("3") ||
+                    password.contains("4") || password.contains("5") || password.contains("6") ||
+                    password.contains("7") || password.contains("8") || password.contains("9") ||
+                    password.contains("0") {
+                    println!("Цифра!");
+                }
+            }
+        }
+
         // уровень доступа
         println!("Введите Уровень доступа:/n");
         let mut lvl = String::new();
         io::stdin().read_line(&mut lvl);
+        if lvl.contains("1"||"2"){
+            println!{"lvl ok!"}
+        }
         //запись значений файла в переменную
         let mut file = std::fs::File::open(path).unwrap();
         let mut contents = String::new();
@@ -293,7 +325,6 @@ fn main() {
 
        let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
-            .append(true)
             .open(path)
             .expect("unable to open file");
         let mut f = BufWriter::new(f);
@@ -314,7 +345,16 @@ fn main() {
             let mut lvl_authorization = String::new();
             io::stdin().read_line(&mut lvl_authorization);
             //сравнить данные из файла
+
+            let file = File::open(path).unwrap();
+            let reader = BufReader::new(file);
+            // чтение файла построчно используя lines() итератор из std::io::BufRead
+            for (index, line) in reader.lines().enumerate() { // enumerate итератор
+                let line = line.unwrap(); // игнорировать ошибки
+                println!("{}. {}", index + 1, line);
+            }
         println!("Конец входа");
+
 
         } else {
             loop {
