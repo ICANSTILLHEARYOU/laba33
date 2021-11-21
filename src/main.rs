@@ -282,6 +282,7 @@ fn main() {
         println!("Введите пароль:/n");
         let mut password = String::new();
         io::stdin().read_line(&mut password);
+        //проверка на спецсимволы
         if password.contains("!") || password.contains('@') || password.contains('"')
             || password.contains("#") || password.contains("№") || password.contains("$")
             || password.contains(";") || password.contains("%") || password.contains(":")
@@ -292,6 +293,7 @@ fn main() {
             || password.contains("{") || password.contains("}") || password.contains(",")
             || password.contains(".") {
             println!("Спецсимвол!");
+            //проверка на заглавную букву
             if password.contains("Q") || password.contains("W") || password.contains("E") ||
                 password.contains("R") || password.contains("T") || password.contains("Y") ||
                 password.contains("U") || password.contains("I") || password.contains("O") ||
@@ -302,6 +304,7 @@ fn main() {
                 password.contains("C") || password.contains("V") || password.contains("B") ||
                 password.contains("N") || password.contains("M") {
                 println!("Заглавная буква!");
+                //проверка цифру
                 if password.contains("1") || password.contains("2") || password.contains("3") ||
                     password.contains("4") || password.contains("5") || password.contains("6") ||
                     password.contains("7") || password.contains("8") || password.contains("9") ||
@@ -315,9 +318,13 @@ fn main() {
         println!("Введите Уровень доступа:/n");
         let mut lvl = String::new();
         io::stdin().read_line(&mut lvl);
+        //проверка на цифру
         if lvl.contains("1"||"2"){
             println!{"lvl ok!"}
         }
+        //проверка на существующий логин в файле(не сделано)
+
+
         //запись значений файла в переменную
         let mut file = std::fs::File::open(path).unwrap();
         let mut contents = String::new();
@@ -344,24 +351,19 @@ fn main() {
             println!("Введите Уровень доступа:/n");
             let mut lvl_authorization = String::new();
             io::stdin().read_line(&mut lvl_authorization);
-            //сравнить данные из файла
 
-            let file = File::open(path).unwrap();
-            let reader = BufReader::new(file);
-            // чтение файла построчно используя lines() итератор из std::io::BufRead
-            for (index, line) in reader.lines().enumerate() { // enumerate итератор
-                let line = line.unwrap(); // игнорировать ошибки
-                println!("{}. {}", index + 1, line);
-            }
+            //сравнить данные из файла с тем что ввел пользователь(не сделано)
+            // если данные верны то по уровню выдать файлы admin_dock и user_dock(не сделано)
+
+
         println!("Конец входа");
-
-
         } else {
             loop {
                 println!("Ошибка");
             }
         }
 
+        //проверка содержимого файла
         // открыть в режиме только для чтения (игнорируя ошибки).
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
