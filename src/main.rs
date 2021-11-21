@@ -2,7 +2,7 @@
 use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
 use std::io; // Модуль ввода и вывода.
 use std::fs::File; //  Операции манипулирования файловой системой.
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::env;
 use std::io::Write;
 use std::fs::OpenOptions;
@@ -286,10 +286,12 @@ fn main() {
         println!("Введите Уровень доступа:/n");
         let mut lvl = String::new();
         io::stdin().read_line(&mut lvl);
+        //запись значений файла в переменную
+        let mut file = std::fs::File::open(path).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
 
-        let mut output = File::create(path).unwrap(); // открыть файл для записи
-        // write!(&mut output, "{} {} {}", login, password, lvl).unwrap(); // запись строк в файл
-
+       let mut output = File::create(path).unwrap(); // открыть файл для записи
 
         let f = OpenOptions::new()
             .write(true)
@@ -298,8 +300,7 @@ fn main() {
             .expect("unable to open file");
         let mut f = BufWriter::new(f);
 
-
-        writeln!(f, "{} {} {}", login, password, lvl).expect("unable to write");
+        writeln!(f, "{} {} {} {}", contents, login, password, lvl).expect("unable to write"); // запись строк в файл
         } else if "2" == action.trim() {
             // вход
             println!("Введите логин:/n");
