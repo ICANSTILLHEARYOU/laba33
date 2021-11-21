@@ -5,6 +5,8 @@ use std::fs::File; //  Операции манипулирования файл�
 use std::io::{BufRead, BufReader};
 use std::env;
 use std::io::Write;
+use std::fs::OpenOptions;
+use std::io::BufWriter;
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -310,7 +312,7 @@ fn main() {
     println!("vvod {}", md5_utf8(&text)); // потом ужалить
 
     let mut output = File::create(path).unwrap(); // открыть файл для записи
-    write!(&mut output, "{}", text).unwrap();
+    write!(&mut output, "{} {} {}", login, password, lvl).unwrap();
 
     // открыть в режиме только для чтения (игнорируя ошибки).
     let file = File::open(path).unwrap();
@@ -321,5 +323,20 @@ fn main() {
         let line = line.unwrap(); // Ignore errors
         println!("{}. {}", index + 1, line);
     }
+
+
+
+
+        /*let path = "...";
+        let f = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(path)
+            .expect("unable to open file");
+        let mut f = BufWriter::new(f);
+
+        for i in 1..100 {
+            write!(f, "{}", i).expect("unable to write");
+        */
 
 }
