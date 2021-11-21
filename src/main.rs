@@ -2,11 +2,11 @@
 use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
 use std::io; // Модуль ввода и вывода.
 use std::fs::File; //  Операции манипулирования файловой системой.
-use std::io::{BufRead, BufReader, Read};
-use std::env;
-use std::io::Write;
-use std::fs::OpenOptions;
-use std::io::BufWriter;
+use std::io::{BufRead, BufReader, Read}; // потом описать
+use std::env; // потом описать
+use std::io::Write; // потом описать
+use std::fs::OpenOptions; // потом описать
+use std::io::BufWriter; // потом описать
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -265,7 +265,9 @@ fn main() {
     */
 
     //#[warn(unused_parens)]
-    println!("Введите номер действия:\n1 Регистрация\n2 Вход");
+    println!("Введите номер действия:
+    1 Регистрация
+    2 Вход");
     let mut action = String::new();
     io::stdin().read_line(&mut action);
     let path = "all_users.txt"; // логины и пароли
@@ -275,11 +277,11 @@ fn main() {
     if "1" == action.trim() {
         // регистрация
         // логин
-        println!("Введите логин:/n");
+        println!("Введите логин:\t");
         let mut login = String::new();
         io::stdin().read_line(&mut login);
         // пароль
-        println!("Введите пароль:/n");
+        println!("Введите пароль:\t");
         let mut password = String::new();
         io::stdin().read_line(&mut password);
         //проверка на спецсимволы
@@ -315,11 +317,11 @@ fn main() {
         }
 
         // уровень доступа
-        println!("Введите Уровень доступа:/n");
+        println!("Введите Уровень доступа:\t");
         let mut lvl = String::new();
         io::stdin().read_line(&mut lvl);
         //проверка на цифру
-        if lvl.contains("1"||"2"){
+        if lvl.contains("1")||lvl.contains("2"){
             println!{"lvl ok!"}
         }
         //проверка на существующий логин в файле(не сделано)
