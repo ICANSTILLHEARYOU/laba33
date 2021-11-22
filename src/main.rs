@@ -255,7 +255,6 @@ fn main() {
     assert! Утверждает, что логическое выражение истинно во время выполнения.
     Небезопасный код может полагаться на assert! для обеспечения соблюдения инвариантов времени выполнения,
     нарушение которых может привести к небезопасности.
-
     assert!(md5_utf8("") == "d41d8cd98f00b204e9800998ecf8427e");
     assert!(md5_utf8("abc") == "900150983cd24fb0d6963f7d28e17f72");
     assert!(md5_utf8("message digest") == "f96b697d7cb7938d525a2f31aaf161d0");
@@ -333,12 +332,12 @@ fn main() {
         let mut contents = String::new();
         file.read_to_string(&mut contents).unwrap();
 
-        //проверка на существующий логин в файле(не сделано)
+        //проверка на существующий логин в файле
         if contents.contains(&md5_utf8(&*login.trim())) {
-            loop { println!("err"); }
+            loop { println!("Такой логин уже есть."); }
         }
 
-       let f = OpenOptions::new() // открыть файл для записи с добавлением опций
+        let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .open(path)
             .expect("Не получилось открыть файл.");
@@ -346,40 +345,67 @@ fn main() {
         writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); // запись строк в файл
         println!("Конец регистрации.");
 
-        } else if "2" == action.trim() {
-            // вход
-            println!("Введите логин:/n");
-            let mut login_authorization = String::new();
-            io::stdin().read_line(&mut login_authorization);
-            // пароль
-            println!("Введите пароль:/n");
-            let mut password_authorization = String::new();
-            io::stdin().read_line(&mut password_authorization);
-            // уровень доступа
-            println!("Введите Уровень доступа:/n");
-            let mut lvl_authorization = String::new();
-            io::stdin().read_line(&mut lvl_authorization);
+    } else if "2" == action.trim() {
+        // вход
+        println!("Введите логин:/n");
+        let mut login_authorization = String::new();
+        io::stdin().read_line(&mut login_authorization);
+        // пароль
+        println!("Введите пароль:/n");
+        let mut password_authorization = String::new();
+        io::stdin().read_line(&mut password_authorization);
+        // уровень доступа
+        println!("Введите Уровень доступа:/n");
+        let mut lvl_authorization = String::new();
+        io::stdin().read_line(&mut lvl_authorization);
 
-            //сравнить данные из файла с тем что ввел пользователь(не сделано)
-            // если данные верны то по уровню выдать файлы admin_dock и user_dock(не сделано)
+        //сравнить данные из файла с тем что ввел пользователь
+        let mut file = std::fs::File::open(path).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+
+            let mut login_authorization = (&md5_utf8(&*login_authorization.trim()));
+            let mut password_authorization = (&md5_utf8(&*password_authorization.trim()));
+            let mut lvl_authorization = (&md5_utf8(&*lvl_authorization.trim()));
+            let mut new_line = String::new();
+
+                // Добавляем символ в конец строки
+
+                new_line.push(login_authorization.parse().unwrap());
+                new_line.push(" ".parse().unwrap());
+                new_line.push(password_authorization.parse().unwrap());
+                new_line.push(" ".parse().unwrap());
+                new_line.push(lvl_authorization.parse().unwrap());
+                println!("Ваша стринговая строка {}", new_line);
+                // Добавляем в конец строки другую строку
+
+                if contents.contains(&new_line) {
+                    println!("поиск работает");
+                }
+
+
+
+
+
+
+        // если данные верны то по уровню выдать файлы admin_dock и user_dock(не сделано)
 
 
         println!("Конец входа");
-        } else {
-            loop {
-                println!("Ошибка");
-            }
-        }
-
-        //проверка содержимого файла
-        // открыть в режиме только для чтения (игнорируя ошибки).
-        println!("Ваш файл all_users.txt");
-        let file = File::open(path).unwrap();
-        let reader = BufReader::new(file);
-        // чтение файла построчно используя lines() итератор из std::io::BufRead
-        for (index, line) in reader.lines().enumerate() { // enumerate итератор
-            let line = line.unwrap(); // игнорировать ошибки
-            println!("{}. {}", index + 1, line);
+    } else {
+        loop {
+            println!("Ошибка");
         }
     }
 
+    //проверка содержимого файла
+    // открыть в режиме только для чтения (игнорируя ошибки).
+    println!("Ваш файл all_users.txt");
+    let file = File::open(path).unwrap();
+    let reader = BufReader::new(file);
+    // чтение файла построчно используя lines() итератор из std::io::BufRead
+    for (index, line) in reader.lines().enumerate() { // enumerate итератор
+        let line = line.unwrap(); // игнорировать ошибки
+        println!("{}. {}", index + 1, line);
+    }
+}
