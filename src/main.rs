@@ -264,7 +264,8 @@ fn main() {
     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
     */
 
-    //#[warn(unused_parens)]
+    //#[warn(unused_parens)]\
+
     println!("Введите номер действия:
     1 Регистрация
     2 Вход");
@@ -284,6 +285,8 @@ fn main() {
         println!("Введите пароль:\t");
         let mut password = String::new();
         io::stdin().read_line(&mut password);
+
+        //проверка пароля
         //проверка на спецсимволы
         if password.contains("!") || password.contains('@') || password.contains('"')
             || password.contains("#") || password.contains("№") || password.contains("$")
@@ -312,9 +315,9 @@ fn main() {
                     password.contains("7") || password.contains("8") || password.contains("9") ||
                     password.contains("0") {
                     println!("Цифра!");
-                }
-            }
-        }
+                } else { println!("Нет цифры!"); }
+            } else { println!("Нет заглавной буквы!"); }
+        } else { println!("Нет спецсимвола!"); }
 
         // уровень доступа
         println!("Введите Уровень доступа:\t");
@@ -324,21 +327,24 @@ fn main() {
         if lvl.contains("1")||lvl.contains("2"){
             println!{"lvl ok!"}
         }
-        //проверка на существующий логин в файле(не сделано)
-
 
         //запись значений файла в переменную
         let mut file = std::fs::File::open(path).unwrap();
         let mut contents = String::new();
         file.read_to_string(&mut contents).unwrap();
 
+        //проверка на существующий логин в файле(не сделано)
+        if contents.contains(&md5_utf8(&*login.trim())) {
+            loop { println!("err"); }
+        }
+
        let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .open(path)
-            .expect("unable to open file");
+            .expect("Не получилось открыть файл.");
         let mut f = BufWriter::new(f);
         writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); // запись строк в файл
-        println!("Конец регистрации");
+        println!("Конец регистрации.");
 
         } else if "2" == action.trim() {
             // вход
@@ -367,6 +373,7 @@ fn main() {
 
         //проверка содержимого файла
         // открыть в режиме только для чтения (игнорируя ошибки).
+        println!("Ваш файл all_users.txt");
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
         // чтение файла построчно используя lines() итератор из std::io::BufRead
