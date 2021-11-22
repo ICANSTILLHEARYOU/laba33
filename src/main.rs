@@ -360,37 +360,8 @@ fn main() {
         io::stdin().read_line(&mut lvl_authorization);
 
         //сравнить данные из файла с тем что ввел пользователь
-        let mut file = std::fs::File::open(path).unwrap();
-        let mut contents = String::new();
-        file.read_to_string(&mut contents).unwrap();
-
-            let mut login_authorization = (&md5_utf8(&*login_authorization.trim()));
-            let mut password_authorization = (&md5_utf8(&*password_authorization.trim()));
-            let mut lvl_authorization = (&md5_utf8(&*lvl_authorization.trim()));
-            let mut new_line = String::new();
-
-                // Добавляем символ в конец строки
-
-                new_line.push(login_authorization.parse().unwrap());
-                new_line.push(" ".parse().unwrap());
-                new_line.push(password_authorization.parse().unwrap());
-                new_line.push(" ".parse().unwrap());
-                new_line.push(lvl_authorization.parse().unwrap());
-                println!("Ваша стринговая строка {}", new_line);
-                // Добавляем в конец строки другую строку
-
-                if contents.contains(&new_line) {
-                    println!("поиск работает");
-                }
-
-
-
-
-
 
         // если данные верны то по уровню выдать файлы admin_dock и user_dock(не сделано)
-
-
         println!("Конец входа");
     } else {
         loop {
