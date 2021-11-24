@@ -7,6 +7,7 @@ use std::env; // потом описать
 use std::io::Write; // потом описать
 use std::fs::OpenOptions; // потом описать
 use std::io::BufWriter; // потом описать
+use std::time::Duration; // таймер
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -268,7 +269,9 @@ fn main() {
     println!("Введите номер действия:
     1 Регистрация
     2 Вход");
-    let mut action = String::new();
+    let mut good_login = false;
+    let mut bad_login = 0; // счетчик ошибок
+    let mut action = String::new(); // выбор в меню
     io::stdin().read_line(&mut action);
     let path = "all_users.txt"; // логины и пароли
     let path_admin = "admin_dock.txt"; // данные для админа
@@ -347,22 +350,68 @@ fn main() {
 
     } else if "2" == action.trim() {
         // вход
-        println!("Введите логин:/n");
-        let mut login_authorization = String::new();
-        io::stdin().read_line(&mut login_authorization);
-        // пароль
-        println!("Введите пароль:/n");
-        let mut password_authorization = String::new();
-        io::stdin().read_line(&mut password_authorization);
-        // уровень доступа
-        println!("Введите Уровень доступа:/n");
-        let mut lvl_authorization = String::new();
-        io::stdin().read_line(&mut lvl_authorization);
+while good_login != true {
+    println!("Введите логин:\t");
+    let mut login_authorization = String::new();
+    io::stdin().read_line(&mut login_authorization);
+    // пароль
+    println!("Введите пароль:\t");
+    let mut password_authorization = String::new();
+    io::stdin().read_line(&mut password_authorization);
+    // уровень доступа
+    println!("Введите Уровень доступа:\t");
+    let mut lvl_authorization = String::new();
+    io::stdin().read_line(&mut lvl_authorization);
 
-        //сравнить данные из файла с тем что ввел пользователь
+    //сравнить данные из файла с тем что ввел пользователь
+    let file = File::open(path).unwrap();
+    let reader = BufReader::new(file);
+    // чтение файла построчно используя lines() итератор из std::io::BufRead
+    for (index, line) in reader.lines().enumerate() { // enumerate итератор
+        let line = line.unwrap(); // игнорировать ошибки
+        if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) &&
+            line.contains(&md5_utf8(&*lvl_authorization.trim())) {
+            println!("успешный вход");
+            good_login = true;
+        }
 
-        // если данные верны то по уровню выдать файлы admin_dock и user_dock(не сделано)
-        println!("Конец входа");
+    }
+    // если данные верны то по уровню выдать файлы admin_dock и user_dock
+    if good_login == true && lvl_authorization.trim() == "1" {
+        // данные для обычного пользователя
+        let file = File::open(path_admin).unwrap();
+        let reader = BufReader::new(file);
+        for (index, line) in reader.lines().enumerate() {
+            let line = line.unwrap();
+            println!("{}. {}", index + 1, line);
+        }
+    }
+    else {
+        // данные для обычного пользователя
+        let file = File::open(path_user).unwrap();
+        let reader = BufReader::new(file);
+        for (index, line) in reader.lines().enumerate() {
+            let line = line.unwrap();
+            println!("{}. {}", index + 1, line);
+        }
+    }
+    if good_login == false {
+        bad_login+= 1;
+        println!("bad_login {}", bad_login);
+    }
+    // если ошибка 3 раза то заблокировать ввод
+    if bad_login == 3 {
+        let block = Duration::from_secs(1);
+        for sec_left in (0..30).rev() {
+            println!("блокировка {}с", sec_left);
+            std::thread::sleep(block);
+        }
+        bad_login = 0;
+        println!("bad_login сброшен {}",bad_login);
+    }
+
+}
+        println!("Конец входа\t");
     } else {
         loop {
             println!("Ошибка");
