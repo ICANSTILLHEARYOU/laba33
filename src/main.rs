@@ -372,6 +372,7 @@ fn main() {
             }
 
         }
+
         // если данные верны то по уровню выдать файлы admin_dock и user_dock
         // 1 = админ
         if good_login == true && lvl_authorization.trim() == "1" {
