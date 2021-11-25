@@ -289,6 +289,8 @@ fn main() {
         io::stdin().read_line(&mut password);
 
         //проверка пароля
+        //проверка длины пароля
+        if password.trim().len()<=7{panic!("короткий пароль")};
         //проверка на спецсимволы
         if password.contains("!") || password.contains('@') || password.contains('"')
             || password.contains("#") || password.contains("№") || password.contains("$")
@@ -317,9 +319,11 @@ fn main() {
                     password.contains("7") || password.contains("8") || password.contains("9") ||
                     password.contains("0") {
                     println!("Цифра!");
-                } else { println!("Нет цифры!"); }
-            } else { println!("Нет заглавной буквы!"); }
-        } else { println!("Нет спецсимвола!"); }
+                } else { panic!("Нет цифры!");
+                }
+            } else {panic!("Нет заглавной буквы!"); }
+        } else { panic
+        !("Нет спецсимвола!"); }
 
         // уровень доступа
         println!("Введите Уровень доступа:\t");
@@ -337,15 +341,15 @@ fn main() {
 
         //проверка на существующий логин в файле
         if contents.contains(&md5_utf8(&*login.trim())) {
-            loop { println!("Такой логин уже есть."); }
-        }
+            println!("Такой логин уже есть."); } else {
 
         let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .open(path)
             .expect("Не получилось открыть файл.");
         let mut f = BufWriter::new(f);
-        writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); // запись строк в файл
+        writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); }
+        // запись строк в файл
         println!("Конец регистрации.");
 
     } else if "2" == action.trim() {
@@ -386,7 +390,7 @@ while good_login != true {
             println!("{}. {}", index + 1, line);
         }
     }
-    else {
+    else if good_login == true && lvl_authorization.trim() == "2" {
         // данные для обычного пользователя
         let file = File::open(path_user).unwrap();
         let reader = BufReader::new(file);
@@ -394,6 +398,8 @@ while good_login != true {
             let line = line.unwrap();
             println!("{}. {}", index + 1, line);
         }
+    }else{
+        println!("неправильные данные");
     }
     if good_login == false {
         bad_login+= 1;
@@ -412,10 +418,8 @@ while good_login != true {
 
 }
         println!("Конец входа\t");
-    } else {
-        loop {
+    } else{
             println!("Ошибка");
-        }
     }
 
     //проверка содержимого файла
