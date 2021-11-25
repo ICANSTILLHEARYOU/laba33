@@ -1,13 +1,13 @@
-#![allow(non_snake_case)] // RFC 1321 uses many capitalized variables
+#![allow(non_snake_case)] // RFC 1321 использует много переменных с заглавной буквы
 use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
 use std::io; // Модуль ввода и вывода.
 use std::fs::File; //  Операции манипулирования файловой системой.
-use std::io::{BufRead, BufReader, Read}; // потом описать
-use std::env; // потом описать
-use std::io::Write; // потом описать
-use std::fs::OpenOptions; // потом описать
-use std::io::BufWriter; // потом описать
-use std::time::Duration; // таймер
+use std::io::{BufRead, BufReader, Read}; // имеент внутренний буфер для доп способов чтения / добавляет буферизацию любому ридеру / читает байты из источника
+use std::io::Write; // Метод записи попытается записать некоторые данные в объект возвращая сколько байтов было успешно записано.
+use std::fs::OpenOptions; // Пункты и флаги, которые можно использовать для настройки способа открытия файла.
+use std::io::BufWriter; // Обертывает средство записи и буферизует его вывод
+use std::time::Duration; // Тип продолжительности, представляющий промежуток времени, обычно используемый для системных тайм-аутов.
+
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -251,7 +251,6 @@ fn md5_utf8(smsg: &str) -> String {
 }
 
 fn main() {
-
     /*
     assert! Утверждает, что логическое выражение истинно во время выполнения.
     Небезопасный код может полагаться на assert! для обеспечения соблюдения инвариантов времени выполнения,
@@ -263,7 +262,6 @@ fn main() {
     assert!(md5_utf8("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") == "d174ab98d277d9f5a5611c2c9f419d9f");
     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
     */
-
     //#[warn(unused_parens)]\
 
     println!("Введите номер действия:
@@ -276,7 +274,7 @@ fn main() {
     let path = "all_users.txt"; // логины и пароли
     let path_admin = "admin_dock.txt"; // данные для админа
     let path_user = "user_dock.txt"; // данные для обычного пользователя
-
+    // выбор в меню
     if "1" == action.trim() {
         // регистрация
         // логин
@@ -290,7 +288,7 @@ fn main() {
 
         //проверка пароля
         //проверка длины пароля
-        if password.trim().len()<=7{panic!("короткий пароль")};
+        if password.trim().len()<=7{panic!("Пароль доджен быть не короче 8 символов.")};
         //проверка на спецсимволы
         if password.contains("!") || password.contains('@') || password.contains('"')
             || password.contains("#") || password.contains("№") || password.contains("$")
@@ -301,7 +299,6 @@ fn main() {
             || password.contains("_") || password.contains("=") || password.contains("+")
             || password.contains("{") || password.contains("}") || password.contains(",")
             || password.contains(".") {
-            println!("Спецсимвол!");
             //проверка на заглавную букву
             if password.contains("Q") || password.contains("W") || password.contains("E") ||
                 password.contains("R") || password.contains("T") || password.contains("Y") ||
@@ -312,18 +309,15 @@ fn main() {
                 password.contains("L") || password.contains("Z") || password.contains("X") ||
                 password.contains("C") || password.contains("V") || password.contains("B") ||
                 password.contains("N") || password.contains("M") {
-                println!("Заглавная буква!");
                 //проверка цифру
                 if password.contains("1") || password.contains("2") || password.contains("3") ||
                     password.contains("4") || password.contains("5") || password.contains("6") ||
                     password.contains("7") || password.contains("8") || password.contains("9") ||
                     password.contains("0") {
-                    println!("Цифра!");
-                } else { panic!("Нет цифры!");
-                }
-            } else {panic!("Нет заглавной буквы!"); }
-        } else { panic
-        !("Нет спецсимвола!"); }
+                    if password.contains(" ") { panic!("Недопустимый символ!");}
+                } else { panic!("Нет цифры!");}
+            } else {panic!("Нет заглавной буквы!");}
+        } else { panic!("Нет спецсимвола!");}
 
         // уровень доступа
         println!("Введите Уровень доступа:\t");
@@ -342,7 +336,6 @@ fn main() {
         //проверка на существующий логин в файле
         if contents.contains(&md5_utf8(&*login.trim())) {
             println!("Такой логин уже есть."); } else {
-
         let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .open(path)
@@ -351,85 +344,73 @@ fn main() {
         writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); }
         // запись строк в файл
         println!("Конец регистрации.");
-
     } else if "2" == action.trim() {
         // вход
-while good_login != true {
-    println!("Введите логин:\t");
-    let mut login_authorization = String::new();
-    io::stdin().read_line(&mut login_authorization);
-    // пароль
-    println!("Введите пароль:\t");
-    let mut password_authorization = String::new();
-    io::stdin().read_line(&mut password_authorization);
-    // уровень доступа
-    println!("Введите Уровень доступа:\t");
-    let mut lvl_authorization = String::new();
-    io::stdin().read_line(&mut lvl_authorization);
+    while good_login != true {
+        println!("Введите логин:\t");
+        let mut login_authorization = String::new();
+        io::stdin().read_line(&mut login_authorization);
+        // пароль
+        println!("Введите пароль:\t");
+        let mut password_authorization = String::new();
+        io::stdin().read_line(&mut password_authorization);
+        // уровень доступа
+        println!("Введите Уровень доступа:\t");
+        let mut lvl_authorization = String::new();
+        io::stdin().read_line(&mut lvl_authorization);
 
-    //сравнить данные из файла с тем что ввел пользователь
-    let file = File::open(path).unwrap();
-    let reader = BufReader::new(file);
-    // чтение файла построчно используя lines() итератор из std::io::BufRead
-    for (index, line) in reader.lines().enumerate() { // enumerate итератор
-        let line = line.unwrap(); // игнорировать ошибки
-        if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) &&
-            line.contains(&md5_utf8(&*lvl_authorization.trim())) {
-            println!("успешный вход");
-            good_login = true;
-        }
-
-    }
-    // если данные верны то по уровню выдать файлы admin_dock и user_dock
-    if good_login == true && lvl_authorization.trim() == "1" {
-        // данные для обычного пользователя
-        let file = File::open(path_admin).unwrap();
+        //сравнить данные из файла с тем что ввел пользователь
+        let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
-        for (index, line) in reader.lines().enumerate() {
-            let line = line.unwrap();
-            println!("{}. {}", index + 1, line);
-        }
-    }
-    else if good_login == true && lvl_authorization.trim() == "2" {
-        // данные для обычного пользователя
-        let file = File::open(path_user).unwrap();
-        let reader = BufReader::new(file);
-        for (index, line) in reader.lines().enumerate() {
-            let line = line.unwrap();
-            println!("{}. {}", index + 1, line);
-        }
-    }else{
-        println!("неправильные данные");
-    }
-    if good_login == false {
-        bad_login+= 1;
-        println!("bad_login {}", bad_login);
-    }
-    // если ошибка 3 раза то заблокировать ввод
-    if bad_login == 3 {
-        let block = Duration::from_secs(1);
-        for sec_left in (0..30).rev() {
-            println!("блокировка {}с", sec_left);
-            std::thread::sleep(block);
-        }
-        bad_login = 0;
-        println!("bad_login сброшен {}",bad_login);
-    }
+        // чтение файла построчно используя lines() итератор из std::io::BufRead
+        for (index, line) in reader.lines().enumerate() { // enumerate итератор
+            let line = line.unwrap(); // игнорировать ошибки
+            if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) &&
+                line.contains(&md5_utf8(&*lvl_authorization.trim())) {
+                println!("успешный вход");
+                good_login = true;
+            }
 
-}
-        println!("Конец входа\t");
-    } else{
-            println!("Ошибка");
-    }
+        }
+        // если данные верны то по уровню выдать файлы admin_dock и user_dock
+        // 1 = админ
+        if good_login == true && lvl_authorization.trim() == "1" {
+            // данные для обычного пользователя
+            let file = File::open(path_admin).unwrap();
+            let reader = BufReader::new(file);
+            for (index, line) in reader.lines().enumerate() {
+                let line = line.unwrap();
+                println!("{}. {}", index + 1, line);
+            }
+        }
+        // 2 = пользователь
+        else if good_login == true && lvl_authorization.trim() == "2" {
+            // данные для обычного пользователя
+            let file = File::open(path_user).unwrap();
+            let reader = BufReader::new(file);
+            for (index, line) in reader.lines().enumerate() {
+                let line = line.unwrap();
+                println!("{}. {}", index + 1, line);
+            }
+        }else{
+            println!("Неправильный логин/пароль/уровень доступа.");
+        }
+        if good_login == false {
+            bad_login+= 1;
+        }
 
-    //проверка содержимого файла
-    // открыть в режиме только для чтения (игнорируя ошибки).
-    println!("Ваш файл all_users.txt");
-    let file = File::open(path).unwrap();
-    let reader = BufReader::new(file);
-    // чтение файла построчно используя lines() итератор из std::io::BufRead
-    for (index, line) in reader.lines().enumerate() { // enumerate итератор
-        let line = line.unwrap(); // игнорировать ошибки
-        println!("{}. {}", index + 1, line);
+        // если ошибка 3 раза то заблокировать ввод
+        if bad_login == 3 {
+            let block = Duration::from_secs(1);
+            for sec_left in (0..30).rev() {
+                println!("блокировка {}с", sec_left);
+                std::thread::sleep(block);
+            }
+            bad_login = 0;
+        }
     }
-}
+            println!("Успешный вход.\t");
+        } else{
+                panic!("Ошибка");
+        }
+    }
