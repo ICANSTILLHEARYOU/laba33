@@ -326,8 +326,13 @@ fn main() {
         //проверка на цифру
         if lvl.contains("1")||lvl.contains("2"){
             println!{"lvl ok!"}
+        } else {
+            panic!{"Нет такого уровня доступа!"};
         }
 
+        if login == password {
+            panic!{"Пароль и логин не должны совпадать"};
+        }
         //запись значений файла в переменную
         let mut file = std::fs::File::open(path).unwrap();
         let mut contents = String::new();
@@ -403,7 +408,7 @@ fn main() {
         // если ошибка 3 раза то заблокировать ввод
         if bad_login == 3 {
             let block = Duration::from_secs(1);
-            for sec_left in (0..30).rev() {
+            for sec_left in (0..60).rev() {
                 println!("блокировка {}с", sec_left);
                 std::thread::sleep(block);
             }
