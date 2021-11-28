@@ -70,11 +70,11 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
 
     /* Обработайте каждый блок из 16 слов. (поскольку 1 слово составляет 4 байта, то 16 слов составляют 64 байта) */
     for mut block in msg.chunks_exact_mut(64) {
-        // Возвращает итератор по элементам chunk_size среза за раз, начиная с начала среза.
-        //  Срез позволяет ссылаться на смежную последовательность элементов из коллекции, вместо полной коллекции.
+        // Возвращает итератор по элементам(64) chunk_size среза за раз, начиная с начала среза.
+        // Срез позволяет ссылаться на смежную последовательность элементов из коллекции, вместо полной коллекции.
 
         /* Копирование блока в Х. */
-        #![allow(unused_mut)] // увеличение объема разрешения позволяет избежать предупреждения
+        ![allow(unused_mut)]; // увеличение объема разрешения позволяет избежать предупреждения
         let mut X = unsafe { mem::transmute::<&mut [u8], &mut [u32]>(&mut block) };
         // Копирует биты из исходного значения в целевое значение, а затем забывает оригинал
         // Похоже на memcpy из С (копирование одной области памяти в другую)
@@ -368,7 +368,7 @@ fn main() {
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
         // чтение файла построчно используя lines() итератор из std::io::BufRead
-        for (index, line) in reader.lines().enumerate() { // enumerate итератор
+        for (index, line) in reader.lines().enumerate() { // enumerate перечисление — итератор
             let line = line.unwrap(); // игнорировать ошибки
             if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) &&
                 line.contains(&md5_utf8(&*lvl_authorization.trim())) {
