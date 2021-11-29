@@ -262,7 +262,6 @@ fn main() {
     assert!(md5_utf8("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") == "d174ab98d277d9f5a5611c2c9f419d9f");
     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
     */
-    //#[warn(unused_parens)]\
 
     println!("Введите номер действия:
     1 Регистрация
