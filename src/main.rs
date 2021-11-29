@@ -82,7 +82,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
         /* Сохранить регистры A, B, C, D */
         let AA = A;
         let BB = B;
-00        let DD = D;
+        let DD = D;
 
         /* Round 1.  Пусть [abcd k s i] обозначают операцию
         a = b + ((a + F(b,c,d) + X[k] + T[i]) <<< s). */
@@ -110,7 +110,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
 
         op1!(A, B, C, D, 4, 7, 5);
         op1!(D, A, B, C, 5, 12, 6);
-        op1!(C, D, A, B, 6, 17, 7);
+     Ф   op1!(C, D, A, B, 6, 17, 7);
         op1!(B, C, D, A, 7, 22, 8);
 
         op1!(A, B, C, D, 8, 7, 9);
@@ -422,7 +422,7 @@ fn main() {
             }
         }
         else{
-            println!("Неправильный логин/пароль/уровень доступа.");
+            println!("Неправильный логин/пароль");
         }
         if good_login == false {
             bad_login+= 1;
