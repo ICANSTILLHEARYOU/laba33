@@ -74,7 +74,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
         // Срез позволяет ссылаться на смежную последовательность элементов из коллекции, вместо полной коллекции.
 
         /* Копирование блока в Х. */
-        ![allow(unused_mut)]; // увеличение объема разрешения позволяет избежать предупреждения
+        #![allow(unused_mut)]; // увеличение объема разрешения позволяет избежать предупреждения
         let mut X = unsafe { mem::transmute::<&mut [u8], &mut [u32]>(&mut block) };
         // Копирует биты из исходного значения в целевое значение, а затем забывает оригинал
         // Похоже на memcpy из С (копирование одной области памяти в другую)
@@ -339,13 +339,13 @@ fn main() {
 
         //проверка на существующий логин в файле
         if contents.contains(&md5_utf8(&*login.trim())) {
-            println!("Такой логин уже есть."); } else {
+            panic!("Такой логин уже есть."); } else {
         let f = OpenOptions::new() // открыть файл для записи с добавлением опций
             .write(true)
             .open(path)
             .expect("Не получилось открыть файл.");
         let mut f = BufWriter::new(f);
-        writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), md5_utf8(&*lvl.trim())).expect("unable to write"); }
+        writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), &*lvl.trim()).expect("unable to write"); }
         // запись строк в файл
         println!("Конец регистрации.");
     } else if "2" == action.trim() {
@@ -359,9 +359,8 @@ fn main() {
         let mut password_authorization = String::new();
         io::stdin().read_line(&mut password_authorization);
         // уровень доступа
-        println!("Введите Уровень доступа:\t");
+
         let mut lvl_authorization = String::new();
-        io::stdin().read_line(&mut lvl_authorization);
 
         //сравнить данные из файла с тем что ввел пользователь
         let file = File::open(path).unwrap();
@@ -369,17 +368,22 @@ fn main() {
         // чтение файла построчно используя lines() итератор из std::io::BufRead
         for (index, line) in reader.lines().enumerate() { // enumerate перечисление — итератор
             let line = line.unwrap(); // игнорировать ошибки
-            if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) &&
-                line.contains(&md5_utf8(&*lvl_authorization.trim())) {
+            if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) {
                 println!("успешный вход");
                 good_login = true;
+                if (line.contains("1")) {
+                    lvl_authorization = "1".to_string();
+                } else {
+                    lvl_authorization = "2".to_string();
+                }
+
             }
 
         }
 
         // если данные верны то по уровню выдать файлы admin_dock и user_dock
         // 1 = админ
-        if good_login == true && lvl_authorization.trim() == "1" {
+        if good_login == true && lvl_authorization == '1'.to_string() {
             // данные для обычного пользователя
             let file = File::open(path_admin).unwrap();
             let reader = BufReader::new(file);
@@ -389,7 +393,7 @@ fn main() {
             }
         }
         // 2 = пользователь
-        else if good_login == true && lvl_authorization.trim() == "2" {
+        else if good_login == true && lvl_authorization == '2'.to_string() {
             // данные для обычного пользователя
             let file = File::open(path_user).unwrap();
             let reader = BufReader::new(file);
