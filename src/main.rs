@@ -82,8 +82,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
         /* Сохранить регистры A, B, C, D */
         let AA = A;
         let BB = B;
-        let CC = C;
-        let DD = D;
+00        let DD = D;
 
         /* Round 1.  Пусть [abcd k s i] обозначают операцию
         a = b + ((a + F(b,c,d) + X[k] + T[i]) <<< s). */
