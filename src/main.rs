@@ -267,6 +267,7 @@ fn main() {
     1 Регистрация
     2 Вход");
     let mut good_login = false;
+    let mut num = 0;
     let mut bad_login = 0; // счетчик ошибок
     let mut action = String::new(); // выбор в меню
     io::stdin().read_line(&mut action);
@@ -314,6 +315,16 @@ fn main() {
                     password.contains("7") || password.contains("8") || password.contains("9") ||
                     password.contains("0") {
                     if password.contains(" ") { panic!("Недопустимый символ!");}
+                        if password.contains("q") || password.contains("w") || password.contains("e") ||
+                            password.contains("r") || password.contains("t") || password.contains("y") ||
+                            password.contains("u") || password.contains("i") || password.contains("o") ||
+                            password.contains("p") || password.contains("a") || password.contains("s") ||
+                            password.contains("d") || password.contains("f") || password.contains("g") ||
+                            password.contains("h") || password.contains("j") || password.contains("k") ||
+                            password.contains("l") || password.contains("z") || password.contains("x") ||
+                            password.contains("c") || password.contains("v") || password.contains("b") ||
+                            password.contains("n") || password.contains("m") {
+                        } else { panic!("Нет маленькой буквы")}
                 } else { panic!("Нет цифры!");}
             } else {panic!("Нет заглавной буквы!");}
         } else { panic!("Нет спецсимвола!");}
@@ -325,6 +336,12 @@ fn main() {
         //проверка на цифру
         if lvl.contains("1")||lvl.contains("2"){
             println!{"lvl ok!"}
+            if lvl.contains("1") {
+                lvl = "admin".to_string();
+            }
+            else {
+                lvl = "user".to_string();
+            }
         } else {
             panic!{"Нет такого уровня доступа!"};
         }
@@ -360,8 +377,7 @@ fn main() {
         io::stdin().read_line(&mut password_authorization);
         // уровень доступа
 
-        let mut lvl_authorization = String::new();
-
+        println!("init {}", num);
         //сравнить данные из файла с тем что ввел пользователь
         let file = File::open(path).unwrap();
         let reader = BufReader::new(file);
@@ -371,20 +387,24 @@ fn main() {
             if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) {
                 println!("успешный вход");
                 good_login = true;
-                if (line.contains("1")) {
-                    lvl_authorization = "1".to_string();
+                if line.contains("admin") {
+                    num = 1;
+                    println!("change {}", num);
                 } else {
-                    lvl_authorization = "2".to_string();
+                    num = 2;
+                    println!("change {}", num);
                 }
 
             }
 
         }
 
+
         // если данные верны то по уровню выдать файлы admin_dock и user_dock
         // 1 = админ
-        if good_login == true && lvl_authorization == '1'.to_string() {
-            // данные для обычного пользователя
+        println!("before if {}", num);
+        if good_login == true && num == 1 {
+            // данные для пользователя
             let file = File::open(path_admin).unwrap();
             let reader = BufReader::new(file);
             for (index, line) in reader.lines().enumerate() {
@@ -393,7 +413,7 @@ fn main() {
             }
         }
         // 2 = пользователь
-        else if good_login == true && lvl_authorization == '2'.to_string() {
+        else if good_login == true && num == 2 {
             // данные для обычного пользователя
             let file = File::open(path_user).unwrap();
             let reader = BufReader::new(file);
@@ -401,7 +421,8 @@ fn main() {
                 let line = line.unwrap();
                 println!("{}. {}", index + 1, line);
             }
-        }else{
+        }
+        else{
             println!("Неправильный логин/пароль/уровень доступа.");
         }
         if good_login == false {
