@@ -304,7 +304,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
 
         op1!(A, B, C, D, 4, 7, 5);
         op1!(D, A, B, C, 5, 12, 6);
-     Ф   op1!(C, D, A, B, 6, 17, 7);
+        op1!(C, D, A, B, 6, 17, 7);
         op1!(B, C, D, A, 7, 22, 8);
 
         op1!(A, B, C, D, 8, 7, 9);
@@ -424,7 +424,6 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
 
         A = A.wrapping_add(AA);
         B = B.wrapping_add(BB);
-        C = C.wrapping_add(CC);
         D = D.wrapping_add(DD);
     }
     (
