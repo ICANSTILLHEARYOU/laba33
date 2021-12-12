@@ -1,11 +1,11 @@
 #![allow(non_snake_case)] // RFC 1321 использует много переменных с заглавной буквы
-use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
-use std::io; // Модуль ввода и вывода.
 use std::fs::File; //  Операции манипулирования файловой системой.
-use std::io::{BufRead, BufReader, Read}; // имеент внутренний буфер для доп способов чтения / добавляет буферизацию любому ридеру / читает байты из источника
-use std::io::Write; // Метод записи попытается записать некоторые данные в объект возвращая сколько байтов было успешно записано.
 use std::fs::OpenOptions; // Пункты и флаги, которые можно использовать для настройки способа открытия файла.
+use std::io; // Модуль ввода и вывода.
 use std::io::BufWriter; // Обертывает средство записи и буферизует его вывод
+use std::io::Write; // Метод записи попытается записать некоторые данные в объект возвращая сколько байтов было успешно записано.
+use std::io::{BufRead, BufReader, Read}; // имеент внутренний буфер для доп способов чтения / добавляет буферизацию любому ридеру / читает байты из источника
+use std::mem; // Модуль содержит функции для запроса размера и выравнивания типов, инициализации и управления памятью.
 use std::time::Duration; // Тип продолжительности, представляющий промежуток времени, обычно используемый для системных тайм-аутов.
 
 fn main() {
@@ -21,9 +21,11 @@ fn main() {
     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
     */
 
-    println!("Введите номер действия:
+    println!(
+        "Введите номер действия:
     1 Регистрация
-    2 Вход");
+    2 Вход"
+    );
     let mut good_login = false;
     let mut num = 0;
     let mut bad_login = 0; // счетчик ошибок
@@ -32,7 +34,7 @@ fn main() {
     let path = "all_users.txt"; // логины и пароли
     let path_admin = "admin_dock.txt"; // данные для админа
     let path_user = "user_dock.txt"; // данные для обычного пользователя
-    // выбор в меню
+                                     // выбор в меню
     if "1" == action.trim() {
         // регистрация
         // логин
@@ -46,66 +48,137 @@ fn main() {
 
         //проверка пароля
         //проверка длины пароля
-        if password.trim().len()<=7{panic!("Пароль доджен быть не короче 8 символов.")};
+        if password.trim().len() <= 7 {
+            panic!("Пароль доджен быть не короче 8 символов.")
+        };
         //проверка на спецсимволы
-        if password.contains("!") || password.contains('@') || password.contains('"')
-            || password.contains("#") || password.contains("№") || password.contains("$")
-            || password.contains(";") || password.contains("%") || password.contains(":")
-            || password.contains("^") || password.contains("[") || password.contains("]")
-            || password.contains("&") || password.contains("?") || password.contains("*")
-            || password.contains("(") || password.contains(")") || password.contains("-")
-            || password.contains("_") || password.contains("=") || password.contains("+")
-            || password.contains("{") || password.contains("}") || password.contains(",")
-            || password.contains(".") {
+        if password.contains("!")
+            || password.contains('@')
+            || password.contains('"')
+            || password.contains("#")
+            || password.contains("№")
+            || password.contains("$")
+            || password.contains(";")
+            || password.contains("%")
+            || password.contains(":")
+            || password.contains("^")
+            || password.contains("[")
+            || password.contains("]")
+            || password.contains("&")
+            || password.contains("?")
+            || password.contains("*")
+            || password.contains("(")
+            || password.contains(")")
+            || password.contains("-")
+            || password.contains("_")
+            || password.contains("=")
+            || password.contains("+")
+            || password.contains("{")
+            || password.contains("}")
+            || password.contains(",")
+            || password.contains(".")
+        {
             //проверка на заглавную букву
-            if password.contains("Q") || password.contains("W") || password.contains("E") ||
-                password.contains("R") || password.contains("T") || password.contains("Y") ||
-                password.contains("U") || password.contains("I") || password.contains("O") ||
-                password.contains("P") || password.contains("A") || password.contains("S") ||
-                password.contains("D") || password.contains("F") || password.contains("G") ||
-                password.contains("H") || password.contains("J") || password.contains("K") ||
-                password.contains("L") || password.contains("Z") || password.contains("X") ||
-                password.contains("C") || password.contains("V") || password.contains("B") ||
-                password.contains("N") || password.contains("M") {
+            if password.contains("Q")
+                || password.contains("W")
+                || password.contains("E")
+                || password.contains("R")
+                || password.contains("T")
+                || password.contains("Y")
+                || password.contains("U")
+                || password.contains("I")
+                || password.contains("O")
+                || password.contains("P")
+                || password.contains("A")
+                || password.contains("S")
+                || password.contains("D")
+                || password.contains("F")
+                || password.contains("G")
+                || password.contains("H")
+                || password.contains("J")
+                || password.contains("K")
+                || password.contains("L")
+                || password.contains("Z")
+                || password.contains("X")
+                || password.contains("C")
+                || password.contains("V")
+                || password.contains("B")
+                || password.contains("N")
+                || password.contains("M")
+            {
                 //проверка цифру
-                if password.contains("1") || password.contains("2") || password.contains("3") ||
-                    password.contains("4") || password.contains("5") || password.contains("6") ||
-                    password.contains("7") || password.contains("8") || password.contains("9") ||
-                    password.contains("0") {
-                    if password.contains(" ") { panic!("Недопустимый символ!");}
-                    if password.contains("q") || password.contains("w") || password.contains("e") ||
-                        password.contains("r") || password.contains("t") || password.contains("y") ||
-                        password.contains("u") || password.contains("i") || password.contains("o") ||
-                        password.contains("p") || password.contains("a") || password.contains("s") ||
-                        password.contains("d") || password.contains("f") || password.contains("g") ||
-                        password.contains("h") || password.contains("j") || password.contains("k") ||
-                        password.contains("l") || password.contains("z") || password.contains("x") ||
-                        password.contains("c") || password.contains("v") || password.contains("b") ||
-                        password.contains("n") || password.contains("m") {
-                    } else { panic!("Нет маленькой буквы")}
-                } else { panic!("Нет цифры!");}
-            } else {panic!("Нет заглавной буквы!");}
-        } else { panic!("Нет спецсимвола!");}
+                if password.contains("1")
+                    || password.contains("2")
+                    || password.contains("3")
+                    || password.contains("4")
+                    || password.contains("5")
+                    || password.contains("6")
+                    || password.contains("7")
+                    || password.contains("8")
+                    || password.contains("9")
+                    || password.contains("0")
+                {
+                    if password.contains(" ") {
+                        panic!("Недопустимый символ!");
+                    }
+                    if password.contains("q")
+                        || password.contains("w")
+                        || password.contains("e")
+                        || password.contains("r")
+                        || password.contains("t")
+                        || password.contains("y")
+                        || password.contains("u")
+                        || password.contains("i")
+                        || password.contains("o")
+                        || password.contains("p")
+                        || password.contains("a")
+                        || password.contains("s")
+                        || password.contains("d")
+                        || password.contains("f")
+                        || password.contains("g")
+                        || password.contains("h")
+                        || password.contains("j")
+                        || password.contains("k")
+                        || password.contains("l")
+                        || password.contains("z")
+                        || password.contains("x")
+                        || password.contains("c")
+                        || password.contains("v")
+                        || password.contains("b")
+                        || password.contains("n")
+                        || password.contains("m")
+                    {
+                    } else {
+                        panic!("Нет маленькой буквы")
+                    }
+                } else {
+                    panic!("Нет цифры!");
+                }
+            } else {
+                panic!("Нет заглавной буквы!");
+            }
+        } else {
+            panic!("Нет спецсимвола!");
+        }
 
         // уровень доступа
         println!("Введите Уровень доступа:\t");
         let mut lvl = String::new();
         io::stdin().read_line(&mut lvl);
         //проверка на цифру
-        if lvl.contains("1")||lvl.contains("2"){
-            println!{"lvl ok!"}
+        if lvl.contains("1") || lvl.contains("2") {
+            println! {"lvl ok!"}
             if lvl.contains("1") {
                 lvl = "admin".to_string();
-            }
-            else {
+            } else {
                 lvl = "user".to_string();
             }
         } else {
-            panic!{"Нет такого уровня доступа!"};
+            panic! {"Нет такого уровня доступа!"};
         }
 
         if login == password {
-            panic!{"Пароль и логин не должны совпадать"};
+            panic! {"Пароль и логин не должны совпадать"};
         }
         //запись значений файла в переменную
         let mut file = std::fs::File::open(path).unwrap();
@@ -114,13 +187,23 @@ fn main() {
 
         //проверка на существующий логин в файле
         if contents.contains(&md5_utf8(&*login.trim())) {
-            panic!("Такой логин уже есть."); } else {
+            panic!("Такой логин уже есть.");
+        } else {
             let f = OpenOptions::new() // открыть файл для записи с добавлением опций
                 .write(true)
                 .open(path)
                 .expect("Не получилось открыть файл.");
             let mut f = BufWriter::new(f);
-            writeln!(f, "{} {} {} {}", contents, md5_utf8(&*login.trim()), md5_utf8(&*password.trim()), &*lvl.trim()).expect("unable to write"); }
+            writeln!(
+                f,
+                "{} {} {} {}",
+                contents,
+                md5_utf8(&*login.trim()),
+                md5_utf8(&*password.trim()),
+                &*lvl.trim()
+            )
+            .expect("unable to write");
+        }
         // запись строк в файл
         println!("Конец регистрации.");
     } else if "2" == action.trim() {
@@ -140,9 +223,12 @@ fn main() {
             let file = File::open(path).unwrap();
             let reader = BufReader::new(file);
             // чтение файла построчно используя lines() итератор из std::io::BufRead
-            for (index, line) in reader.lines().enumerate() { // enumerate перечисление — итератор
+            for (index, line) in reader.lines().enumerate() {
+                // enumerate перечисление — итератор
                 let line = line.unwrap(); // игнорировать ошибки
-                if line.contains(&md5_utf8(&*login_authorization.trim())) && line.contains(&md5_utf8(&*password_authorization.trim())) {
+                if line.contains(&md5_utf8(&*login_authorization.trim()))
+                    && line.contains(&md5_utf8(&*password_authorization.trim()))
+                {
                     println!("успешный вход");
                     good_login = true;
                     if line.contains("admin") {
@@ -152,11 +238,8 @@ fn main() {
                         num = 2;
                         println!("change {}", num);
                     }
-
                 }
-
             }
-
 
             // если данные верны то по уровню выдать файлы admin_dock и user_dock
             // 1 = админ
@@ -179,12 +262,11 @@ fn main() {
                     let line = line.unwrap();
                     println!("{}. {}", index + 1, line);
                 }
-            }
-            else{
+            } else {
                 println!("Неправильный логин/пароль");
             }
             if good_login == false {
-                bad_login+= 1;
+                bad_login += 1;
             }
 
             // если ошибка 3 раза то заблокировать ввод
@@ -198,7 +280,7 @@ fn main() {
             }
         }
         println!("Успешный вход.\t");
-    } else{
+    } else {
         panic!("Ошибка");
     }
 }
@@ -232,8 +314,8 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
 
     // Инициализация буфера
     /* Буфер из четырех слов (A, B, C, D) используется для промежуточных вычислений.
-       Порядок байтов little-endian
-       Здесь каждый из A, B, C, D является 32-битным регистром. */
+    Порядок байтов little-endian
+    Здесь каждый из A, B, C, D является 32-битным регистром. */
     let mut A = 0x67452301u32; // word A: 01 23 45 67
     let mut B = 0xefcdab89u32; // word B: 89 ab cd ef
     let mut C = 0x98badcfeu32; // word C: fe dc ba 98
@@ -268,7 +350,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
         // Срез позволяет ссылаться на смежную последовательность элементов из коллекции, вместо полной коллекции.
 
         /* Копирование блока в Х. */
-        #![allow(unused_mut)]; // увеличение объема разрешения позволяет избежать предупреждения
+        #![allow(unused_mut)] // увеличение объема разрешения позволяет избежать предупреждения
         let mut X = unsafe { mem::transmute::<&mut [u8], &mut [u32]>(&mut block) };
         // Копирует биты из исходного значения в целевое значение, а затем забывает оригинал
         // Похоже на memcpy из С (копирование одной области памяти в другую)
@@ -420,7 +502,7 @@ fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
         op4!(B, C, D, A, 9, 21, 64);
 
         /* . . . увеличить каждый из четырех регистров на значение
-         это было до того, как этот блок был запущен.) */
+        это было до того, как этот блок был запущен.) */
 
         A = A.wrapping_add(AA);
         B = B.wrapping_add(BB);
