@@ -1,299 +1,155 @@
-use std::fs::{
-    // some comment for this
-    File,
-    // some comment for that
-    OpenOptions,
-};
-use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 use std::mem;
-use std::time::Duration;
 
-// todo:
-// 1. abstraction for dumps
+mod utils;
+mod registrar;
+
+enum Action {
+    Register,
+    Login,
+}
+
+// TODO
+// 1. Rewrite login process similar (no the same) to Registrar
+// 2. Move to crypto to separate module
+// 3. Proper error types instead of Strings
+// 4. Write proper module docs/function docs and README
 
 fn main() {
-    let action = login::Action::parse_cli()?;
-    if let Err(e) = action.run() {
+    if let Err(e) = run() {
         println!("Got error: {:?}", e);
     }
 }
 
-fn main_1() {
-    /*
-    // Откуда эти тестовые варианты?
-    assert!(md5_utf8("") == "d41d8cd98f00b204e9800998ecf8427e");
-    assert!(md5_utf8("abc") == "900150983cd24fb0d6963f7d28e17f72");
-    assert!(md5_utf8("message digest") == "f96b697d7cb7938d525a2f31aaf161d0");
-    assert!(md5_utf8("abcdefghijklmnopqrstuvwxyz") == "c3fcd3d76192e4007dfb496cca67e13b");
-    assert!(md5_utf8("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") == "d174ab98d277d9f5a5611c2c9f419d9f");
-    assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
-    */
+fn run() -> Result<(), String> {
+    let action = Action::parse_cli()?;
+    action.run()
+}
 
-    println!(
-        "Введите номер действия:
-        1 Регистрация
-        2 Вход"
-    );
-    let mut good_login = false;
-    let mut num = 0;
-    let mut bad_login = 0; // счетчик ошибок
-    let mut action = String::new(); // выбор в меню
-    io::stdin().read_line(&mut action);
-    let users_hashed_credentials_path = "all_users.txt"; // логины и пароли
-    let path_admin = "admin_dock.txt"; // данные для админа
-    let path_user = "user_dock.txt"; // данные для обычного пользователя
-
-    if "1" == action.trim() {
-        // регистрация
-        // логин
-        println!("Введите логин:\t");
-        let mut login = String::new();
-        io::stdin().read_line(&mut login);
-        // пароль
-        println!("Введите пароль:\t");
-        let mut password = String::new();
-        io::stdin().read_line(&mut password);
-
-        //проверка пароля
-        //проверка длины пароля
-        if password.trim().len() <= 7 {
-            panic!("Пароль доджен быть не короче 8 символов.")
-        };
-        //проверка на спецсимволы
-        if password.contains("!")
-            || password.contains('@')
-            || password.contains('"')
-            || password.contains("#")
-            || password.contains("№")
-            || password.contains("$")
-            || password.contains(";")
-            || password.contains("%")
-            || password.contains(":")
-            || password.contains("^")
-            || password.contains("[")
-            || password.contains("]")
-            || password.contains("&")
-            || password.contains("?")
-            || password.contains("*")
-            || password.contains("(")
-            || password.contains(")")
-            || password.contains("-")
-            || password.contains("_")
-            || password.contains("=")
-            || password.contains("+")
-            || password.contains("{")
-            || password.contains("}")
-            || password.contains(",")
-            || password.contains(".")
-        {
-            //проверка на заглавную букву
-            if password.contains("Q")
-                || password.contains("W")
-                || password.contains("E")
-                || password.contains("R")
-                || password.contains("T")
-                || password.contains("Y")
-                || password.contains("U")
-                || password.contains("I")
-                || password.contains("O")
-                || password.contains("P")
-                || password.contains("A")
-                || password.contains("S")
-                || password.contains("D")
-                || password.contains("F")
-                || password.contains("G")
-                || password.contains("H")
-                || password.contains("J")
-                || password.contains("K")
-                || password.contains("L")
-                || password.contains("Z")
-                || password.contains("X")
-                || password.contains("C")
-                || password.contains("V")
-                || password.contains("B")
-                || password.contains("N")
-                || password.contains("M")
-            {
-                //проверка цифру
-                if password.contains("1")
-                    || password.contains("2")
-                    || password.contains("3")
-                    || password.contains("4")
-                    || password.contains("5")
-                    || password.contains("6")
-                    || password.contains("7")
-                    || password.contains("8")
-                    || password.contains("9")
-                    || password.contains("0")
-                {
-                    if password.contains(" ") {
-                        panic!("Недопустимый символ!");
-                    }
-                    if password.contains("q")
-                        || password.contains("w")
-                        || password.contains("e")
-                        || password.contains("r")
-                        || password.contains("t")
-                        || password.contains("y")
-                        || password.contains("u")
-                        || password.contains("i")
-                        || password.contains("o")
-                        || password.contains("p")
-                        || password.contains("a")
-                        || password.contains("s")
-                        || password.contains("d")
-                        || password.contains("f")
-                        || password.contains("g")
-                        || password.contains("h")
-                        || password.contains("j")
-                        || password.contains("k")
-                        || password.contains("l")
-                        || password.contains("z")
-                        || password.contains("x")
-                        || password.contains("c")
-                        || password.contains("v")
-                        || password.contains("b")
-                        || password.contains("n")
-                        || password.contains("m")
-                    {
-                    } else {
-                        panic!("Нет маленькой буквы")
-                    }
-                } else {
-                    panic!("Нет цифры!");
-                }
-            } else {
-                panic!("Нет заглавной буквы!");
-            }
-        } else {
-            panic!("Нет спецсимвола!");
+impl Action {
+    fn parse_cli() -> Result<Self, String> {
+        println!(
+            "Введите номер действия:
+            1 Регистрация
+            2 Вход"
+        );
+        let action = utils::read_stdin()?;
+        match action.as_str() {
+            "1" => Ok(Action::Register),
+            "2" => Ok(Action::Login),
+            _ => Err("Unknown action".to_string()),
         }
+    }
 
-        // TODO: admin lvl can be set only by admin (not by anyone during registration)
-        // уровень доступа
-        println!("Введите Уровень доступа:\t");
-        let mut lvl = String::new();
-        io::stdin().read_line(&mut lvl);
-        //проверка на цифру
-        if lvl.contains("1") || lvl.contains("2") {
-            println! {"lvl ok!"}
-            if lvl.contains("1") {
-                lvl = "admin".to_string();
-            } else {
-                lvl = "user".to_string();
-            }
-        } else {
-            panic! {"Нет такого уровня доступа!"};
+    fn run(&self) -> Result<(), String> {
+        match self {
+            Action::Register => registrar::Registrar::register(),
+            Action::Login => todo!(),
         }
-
-        if login == password {
-            panic! {"Пароль и логин не должны совпадать"};
-        }
-
-        // File should be closed after reading contents
-        let mut user_credentials_file = std::fs::File::open(users_hashed_credentials_path).unwrap();
-        let mut contents = String::new();
-        user_credentials_file.read_to_string(&mut contents).unwrap();
-
-        //проверка на существующий логин в файле // при ошибке - попроси заново ввести данные.
-        if contents.contains(&md5_utf8(&*login.trim())) {
-            panic!("Такой логин уже есть.");
-        } else {
-            let mut f = OpenOptions::new() // открыть файл для записи с добавлением опций
-                .write(true)
-                .open(users_hashed_credentials_path)
-                .expect("Не получилось открыть файл.");
-            // let mut f = BufWriter::new(f);
-            writeln!(
-                f,
-                "{} {} {} {}",
-                contents,
-                md5_utf8(&*login.trim()),
-                md5_utf8(&*password.trim()),
-                &*lvl.trim()
-            )
-            .expect("unable to write");
-        }
-        // запись строк в файл
-        println!("Конец регистрации.");
-    } else if "2" == action.trim() {
-        // вход
-        while good_login != true {
-            println!("Введите логин:\t");
-            let mut login_authorization = String::new();
-            io::stdin().read_line(&mut login_authorization);
-            // пароль
-            println!("Введите пароль:\t");
-            let mut password_authorization = String::new();
-            io::stdin().read_line(&mut password_authorization);
-            // уровень доступа
-
-            println!("init {}", num);
-            //сравнить данные из файла с тем что ввел пользователь
-            let file = File::open(users_hashed_credentials_path).unwrap();
-            let reader = BufReader::new(file);
-            // чтение файла построчно используя lines() итератор из std::io::BufRead
-            for (index, line) in reader.lines().enumerate() {
-                // enumerate перечисление — итератор
-                let line = line.unwrap(); // игнорировать ошибки
-                if line.contains(&md5_utf8(&*login_authorization.trim()))
-                    && line.contains(&md5_utf8(&*password_authorization.trim()))
-                {
-                    println!("успешный вход");
-                    good_login = true;
-                    if line.contains("admin") {
-                        num = 1;
-                        println!("change {}", num);
-                    } else {
-                        num = 2;
-                        println!("change {}", num);
-                    }
-                }
-            }
-
-            // если данные верны то по уровню выдать файлы admin_dock и user_dock
-            // 1 = админ
-            println!("before if {}", num);
-            if good_login == true && num == 1 {
-                // данные для пользователя
-                let file = File::open(path_admin).unwrap();
-                let reader = BufReader::new(file);
-                for (index, line) in reader.lines().enumerate() {
-                    let line = line.unwrap();
-                    println!("{}. {}", index + 1, line);
-                }
-            }
-            // 2 = пользователь
-            else if good_login == true && num == 2 {
-                // данные для обычного пользователя
-                let file = File::open(path_user).unwrap();
-                let reader = BufReader::new(file);
-                for (index, line) in reader.lines().enumerate() {
-                    let line = line.unwrap();
-                    println!("{}. {}", index + 1, line);
-                }
-            } else {
-                println!("Неправильный логин/пароль");
-            }
-            if good_login == false {
-                bad_login += 1;
-            }
-
-            // если ошибка 3 раза то заблокировать ввод
-            if bad_login == 3 {
-                let block = Duration::from_secs(1);
-                for sec_left in (0..60).rev() {
-                    println!("блокировка {}с", sec_left);
-                    std::thread::sleep(block);
-                }
-                bad_login = 0;
-            }
-        }
-        println!("Успешный вход.\t");
-    } else {
-        panic!("Ошибка");
     }
 }
+
+// fn main_1() {
+//     /*
+//     // Откуда эти тестовые варианты?
+//     assert!(md5_utf8("") == "d41d8cd98f00b204e9800998ecf8427e");
+//     assert!(md5_utf8("abc") == "900150983cd24fb0d6963f7d28e17f72");
+//     assert!(md5_utf8("message digest") == "f96b697d7cb7938d525a2f31aaf161d0");
+//     assert!(md5_utf8("abcdefghijklmnopqrstuvwxyz") == "c3fcd3d76192e4007dfb496cca67e13b");
+//     assert!(md5_utf8("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") == "d174ab98d277d9f5a5611c2c9f419d9f");
+//     assert!(md5_utf8("12345678901234567890123456789012345678901234567890123456789012345678901234567890") == "57edf4a22be3c955ac49da2e2107b67a");
+//     */
+//
+//     println!(
+//         "Введите номер действия:
+//         1 Регистрация
+//         2 Вход"
+//     );
+//     let mut good_login = false;
+//     let mut num = 0;
+//     let mut bad_login = 0; // счетчик ошибок
+//     let mut action = String::new(); // выбор в меню
+//     io::stdin().read_line(&mut action);
+//     let path_admin = "admin_dock.txt"; // данные для админа
+//     let path_user = "user_dock.txt"; // данные для обычного пользователя
+//
+//     if "2" == action.trim() {
+//         // вход
+//         while good_login != true {
+//             println!("Введите логин:\t");
+//             let mut login_authorization = String::new();
+//             io::stdin().read_line(&mut login_authorization);
+//             // пароль
+//             println!("Введите пароль:\t");
+//             let mut password_authorization = String::new();
+//             io::stdin().read_line(&mut password_authorization);
+//             // уровень доступа
+//
+//             println!("init {}", num);
+//             //сравнить данные из файла с тем что ввел пользователь
+//             let file = File::open(users_hashed_credentials_path).unwrap();
+//             let reader = BufReader::new(file);
+//             // чтение файла построчно используя lines() итератор из std::io::BufRead
+//             for (index, line) in reader.lines().enumerate() {
+//                 // enumerate перечисление — итератор
+//                 let line = line.unwrap(); // игнорировать ошибки
+//                 if line.contains(&md5_utf8(&*login_authorization.trim()))
+//                     && line.contains(&md5_utf8(&*password_authorization.trim()))
+//                 {
+//                     println!("успешный вход");
+//                     good_login = true;
+//                     if line.contains("admin") {
+//                         num = 1;
+//                         println!("change {}", num);
+//                     } else {
+//                         num = 2;
+//                         println!("change {}", num);
+//                     }
+//                 }
+//             }
+//
+//             // если данные верны то по уровню выдать файлы admin_dock и user_dock
+//             // 1 = админ
+//             println!("before if {}", num);
+//             if good_login == true && num == 1 {
+//                 // данные для пользователя
+//                 let file = File::open(path_admin).unwrap();
+//                 let reader = BufReader::new(file);
+//                 for (index, line) in reader.lines().enumerate() {
+//                     let line = line.unwrap();
+//                     println!("{}. {}", index + 1, line);
+//                 }
+//             }
+//             // 2 = пользователь
+//             else if good_login == true && num == 2 {
+//                 // данные для обычного пользователя
+//                 let file = File::open(path_user).unwrap();
+//                 let reader = BufReader::new(file);
+//                 for (index, line) in reader.lines().enumerate() {
+//                     let line = line.unwrap();
+//                     println!("{}. {}", index + 1, line);
+//                 }
+//             } else {
+//                 println!("Неправильный логин/пароль");
+//             }
+//             if good_login == false {
+//                 bad_login += 1;
+//             }
+//
+//             // если ошибка 3 раза то заблокировать ввод
+//             if bad_login == 3 {
+//                 let block = Duration::from_secs(1);
+//                 for sec_left in (0..60).rev() {
+//                     println!("блокировка {}с", sec_left);
+//                     std::thread::sleep(block);
+//                 }
+//                 bad_login = 0;
+//             }
+//         }
+//         println!("Успешный вход.\t");
+//     } else {
+//         panic!("Ошибка");
+//     }
+// }
 
 fn md5(mut msg: Vec<u8>) -> (u32, u32, u32, u32) {
     let bitcount = msg.len().saturating_mul(8) as u64;
@@ -532,229 +388,4 @@ fn md5_utf8(smsg: &str) -> String {
     msg.extend(smsg.as_bytes()); // as_bytes преобразует фрагмент строки в фрагмент байта.
     let (A, B, C, D) = md5(msg);
     format!("{:08x}{:08x}{:08x}{:08x}", A, B, C, D) // Вызывает панику, если реализация признака форматирования возвращает ошибку.
-}
-
-mod login {
-    use std::fs::{File, OpenOptions};
-    use std::io::{self, BufWriter, Read, Write};
-
-    use super::utils::read_stdin;
-
-    pub(super) enum Action {
-        Register,
-        Login,
-    }
-
-    struct Registrator;
-
-    impl Action {
-        pub(super) fn parse_cli() -> Result<Self, String> {
-            let action = read_stdin()?;
-            match action.trim() {
-                "1" => Ok(Action::Register),
-                "2" => Ok(Action::Login),
-                _ => Err("Unknown action".to_string()),
-            }
-        }
-
-        pub(super) fn run(&self) -> Result<(), String> {
-            match self {
-                Action::Register => Registrator::register(),
-                Action::Login => todo!(),
-            }
-        }
-    }
-
-    impl Registrator {
-        const LOGIN_MESSAGE: &'static str = "Введите логин";
-
-        fn register() -> Result<(), String> {
-            let path = "all_users.txt";
-
-            let login = Self::read_login("Failed reading user input login")?;
-
-            println!("Введите логин:\t");
-            let mut login = String::new();
-            io::stdin().read_line(&mut login);
-
-            println!("Введите пароль:\t");
-            let mut password = String::new();
-            io::stdin().read_line(&mut password);
-
-            if password.trim().len() <= 7 {
-                panic!("Пароль доджен быть не короче 8 символов.")
-            };
-            //проверка на спецсимволы
-            if password.contains("!")
-                || password.contains('@')
-                || password.contains('"')
-                || password.contains("#")
-                || password.contains("№")
-                || password.contains("$")
-                || password.contains(";")
-                || password.contains("%")
-                || password.contains(":")
-                || password.contains("^")
-                || password.contains("[")
-                || password.contains("]")
-                || password.contains("&")
-                || password.contains("?")
-                || password.contains("*")
-                || password.contains("(")
-                || password.contains(")")
-                || password.contains("-")
-                || password.contains("_")
-                || password.contains("=")
-                || password.contains("+")
-                || password.contains("{")
-                || password.contains("}")
-                || password.contains(",")
-                || password.contains(".")
-            {
-                //проверка на заглавную букву
-                if password.contains("Q")
-                    || password.contains("W")
-                    || password.contains("E")
-                    || password.contains("R")
-                    || password.contains("T")
-                    || password.contains("Y")
-                    || password.contains("U")
-                    || password.contains("I")
-                    || password.contains("O")
-                    || password.contains("P")
-                    || password.contains("A")
-                    || password.contains("S")
-                    || password.contains("D")
-                    || password.contains("F")
-                    || password.contains("G")
-                    || password.contains("H")
-                    || password.contains("J")
-                    || password.contains("K")
-                    || password.contains("L")
-                    || password.contains("Z")
-                    || password.contains("X")
-                    || password.contains("C")
-                    || password.contains("V")
-                    || password.contains("B")
-                    || password.contains("N")
-                    || password.contains("M")
-                {
-                    //проверка цифру
-                    if password.contains("1")
-                        || password.contains("2")
-                        || password.contains("3")
-                        || password.contains("4")
-                        || password.contains("5")
-                        || password.contains("6")
-                        || password.contains("7")
-                        || password.contains("8")
-                        || password.contains("9")
-                        || password.contains("0")
-                    {
-                        if password.contains(" ") {
-                            panic!("Недопустимый символ!");
-                        }
-                        if password.contains("q")
-                            || password.contains("w")
-                            || password.contains("e")
-                            || password.contains("r")
-                            || password.contains("t")
-                            || password.contains("y")
-                            || password.contains("u")
-                            || password.contains("i")
-                            || password.contains("o")
-                            || password.contains("p")
-                            || password.contains("a")
-                            || password.contains("s")
-                            || password.contains("d")
-                            || password.contains("f")
-                            || password.contains("g")
-                            || password.contains("h")
-                            || password.contains("j")
-                            || password.contains("k")
-                            || password.contains("l")
-                            || password.contains("z")
-                            || password.contains("x")
-                            || password.contains("c")
-                            || password.contains("v")
-                            || password.contains("b")
-                            || password.contains("n")
-                            || password.contains("m")
-                        {
-                        } else {
-                            panic!("Нет маленькой буквы")
-                        }
-                    } else {
-                        panic!("Нет цифры!");
-                    }
-                } else {
-                    panic!("Нет заглавной буквы!");
-                }
-            } else {
-                panic!("Нет спецсимвола!");
-            }
-
-            // уровень доступа
-            println!("Введите Уровень доступа:\t");
-            let mut lvl = String::new();
-            io::stdin().read_line(&mut lvl);
-            //проверка на цифру
-            if lvl.contains("1") || lvl.contains("2") {
-                println! {"lvl ok!"}
-                if lvl.contains("1") {
-                    lvl = "admin".to_string();
-                } else {
-                    lvl = "user".to_string();
-                }
-            } else {
-                panic! {"Нет такого уровня доступа!"};
-            }
-
-            if login == password {
-                panic! {"Пароль и логин не должны совпадать"};
-            }
-            //запись значений файла в переменную
-            let mut file = std::fs::File::open(path).unwrap();
-            let mut contents = String::new();
-            file.read_to_string(&mut contents).unwrap();
-
-            //проверка на существующий логин в файле
-            if contents.contains(&super::md5_utf8(&*login.trim())) {
-                panic!("Такой логин уже есть.");
-            } else {
-                let f = OpenOptions::new() // открыть файл для записи с добавлением опций
-                    .write(true)
-                    .open(path)
-                    .expect("Не получилось открыть файл.");
-                let mut f = BufWriter::new(f);
-                writeln!(
-                    f,
-                    "{} {} {} {}",
-                    contents,
-                    super::md5_utf8(&*login.trim()),
-                    super::md5_utf8(&*password.trim()),
-                    &*lvl.trim()
-                )
-                .expect("unable to write");
-            }
-            // запись строк в файл
-            println!("Конец регистрации.");
-            Ok(())
-        }
-
-        fn read_login(err: &str) -> Result<String, String> {
-            println!("{}:\t", Self::LOGIN_MESSAGE);
-            read_stdin().map_err(|e| format!("{}: {}", err, e))
-        }
-    }
-}
-
-mod utils {
-    use std::io;
-
-    pub(super) fn read_stdin() -> Result<String, String> {
-        let mut ret = String::new();
-        io::stdin().read_line(&mut ret).map_err(|e| e.to_string())?;
-        Ok(ret)
-    }
 }
