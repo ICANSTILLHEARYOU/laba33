@@ -12,6 +12,13 @@ use std::time::Duration;
 // 1. abstraction for dumps
 
 fn main() {
+    let action = login::Action::parse_cli()?;
+    if let Err(e) = action.run() {
+        println!("Got error: {:?}", e);
+    }
+}
+
+fn main_1() {
     /*
     // Откуда эти тестовые варианты?
     assert!(md5_utf8("") == "d41d8cd98f00b204e9800998ecf8427e");
@@ -32,7 +39,7 @@ fn main() {
     let mut bad_login = 0; // счетчик ошибок
     let mut action = String::new(); // выбор в меню
     io::stdin().read_line(&mut action);
-    let path = "all_users.txt"; // логины и пароли
+    let users_hashed_credentials_path = "all_users.txt"; // логины и пароли
     let path_admin = "admin_dock.txt"; // данные для админа
     let path_user = "user_dock.txt"; // данные для обычного пользователя
 
@@ -162,6 +169,7 @@ fn main() {
             panic!("Нет спецсимвола!");
         }
 
+        // TODO: admin lvl can be set only by admin (not by anyone during registration)
         // уровень доступа
         println!("Введите Уровень доступа:\t");
         let mut lvl = String::new();
@@ -181,20 +189,21 @@ fn main() {
         if login == password {
             panic! {"Пароль и логин не должны совпадать"};
         }
-        //запись значений файла в переменную
-        let mut file = std::fs::File::open(path).unwrap();
-        let mut contents = String::new();
-        file.read_to_string(&mut contents).unwrap();
 
-        //проверка на существующий логин в файле
+        // File should be closed after reading contents
+        let mut user_credentials_file = std::fs::File::open(users_hashed_credentials_path).unwrap();
+        let mut contents = String::new();
+        user_credentials_file.read_to_string(&mut contents).unwrap();
+
+        //проверка на существующий логин в файле // при ошибке - попроси заново ввести данные.
         if contents.contains(&md5_utf8(&*login.trim())) {
             panic!("Такой логин уже есть.");
         } else {
-            let f = OpenOptions::new() // открыть файл для записи с добавлением опций
+            let mut f = OpenOptions::new() // открыть файл для записи с добавлением опций
                 .write(true)
-                .open(path)
+                .open(users_hashed_credentials_path)
                 .expect("Не получилось открыть файл.");
-            let mut f = BufWriter::new(f);
+            // let mut f = BufWriter::new(f);
             writeln!(
                 f,
                 "{} {} {} {}",
@@ -221,7 +230,7 @@ fn main() {
 
             println!("init {}", num);
             //сравнить данные из файла с тем что ввел пользователь
-            let file = File::open(path).unwrap();
+            let file = File::open(users_hashed_credentials_path).unwrap();
             let reader = BufReader::new(file);
             // чтение файла построчно используя lines() итератор из std::io::BufRead
             for (index, line) in reader.lines().enumerate() {
@@ -539,18 +548,18 @@ mod login {
     struct Registrator;
 
     impl Action {
-        pub(super) fn try_parse() -> Result<Self, String> {
+        pub(super) fn parse_cli() -> Result<Self, String> {
             let action = read_stdin()?;
-            match action.as_str() {
+            match action.trim() {
                 "1" => Ok(Action::Register),
                 "2" => Ok(Action::Login),
                 _ => Err("Unknown action".to_string()),
             }
         }
 
-        pub(super) fn run(&self) {
+        pub(super) fn run(&self) -> Result<(), String> {
             match self {
-                Action::Register => todo!(),
+                Action::Register => Registrator::register(),
                 Action::Login => todo!(),
             }
         }
