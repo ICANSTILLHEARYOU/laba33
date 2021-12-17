@@ -13,7 +13,7 @@ impl Registrar {
     const LOGIN_MESSAGE: &'static str = "Введите логин:";
     const PASSWORD_MESSAGE: &'static str = "Введите пароль:";
     const ACCESS_LEVEL_MESSAGE: &'static str = "Введите Уровень доступа:";
-    const CREDENTIALS_PATH: &'static str = "all_users.txt";
+    const CREDENTIALS_PATH: &'static str = "credentials.txt";
 
     pub(super) fn register() -> Result<(), String> {
         loop {
