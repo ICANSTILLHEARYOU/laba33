@@ -526,8 +526,8 @@ fn md5_utf8(smsg: &str) -> String {
 }
 
 mod login {
-    use std::io::{self, BufWriter, Write, Read};
-    use std::fs::{OpenOptions, File};
+    use std::fs::{File, OpenOptions};
+    use std::io::{self, BufWriter, Read, Write};
 
     use super::utils::read_stdin;
 
@@ -544,7 +544,7 @@ mod login {
             match action.as_str() {
                 "1" => Ok(Action::Register),
                 "2" => Ok(Action::Login),
-                _ => Err("Unknown action".to_string())
+                _ => Err("Unknown action".to_string()),
             }
         }
 
@@ -575,7 +575,7 @@ mod login {
             if password.trim().len() <= 7 {
                 panic!("Пароль доджен быть не короче 8 символов.")
             };
-                    //проверка на спецсимволы
+            //проверка на спецсимволы
             if password.contains("!")
                 || password.contains('@')
                 || password.contains('"')
@@ -732,14 +732,12 @@ mod login {
             println!("Конец регистрации.");
             Ok(())
         }
-    
+
         fn read_login(err: &str) -> Result<String, String> {
             println!("{}:\t", Self::LOGIN_MESSAGE);
             read_stdin().map_err(|e| format!("{}: {}", err, e))
         }
     }
-
-
 }
 
 mod utils {
